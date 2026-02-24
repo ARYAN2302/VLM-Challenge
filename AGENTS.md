@@ -10,4 +10,4 @@
   - Added strict response normalization and allowed-operation validation to keep outputs rubric-compliant.
   - Added `/health` endpoint and safer frame indexing.
 - Estimated Time Saved: ~2 hours.
-- Commit Hash: TBD (to be updated after commit).
+- Commit Hash: `bc42717e62750e9ca18e4e91b3ad4751c037144e`
