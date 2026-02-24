@@ -1,0 +1,11 @@
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+
+# Local heavy artifacts
+/data/
+/shards/
+/qwen-openpack-checkpoints/
+
+# Optional eval cache
+/eval/tmp/

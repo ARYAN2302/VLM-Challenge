@@ -129,6 +129,11 @@ def main() -> None:
     parser.add_argument("--base-preds", type=Path, default=Path("eval/base_predictions_u0108_30.json"))
     parser.add_argument("--finetuned-preds", type=Path, default=Path("eval/finetuned_predictions_u0108_30.json"))
     parser.add_argument("--output", type=Path, default=Path("results.json"))
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Fail if real eval files are missing instead of using mock fallback",
+    )
     args = parser.parse_args()
 
     print("Running Temporal Evaluation on U0108 held-out test set...")
@@ -139,6 +144,13 @@ def main() -> None:
         finetuned_preds = _load_json_list(args.finetuned_preds)
         print("Loaded evaluation files from eval/ directory.")
     else:
+        if args.strict:
+            raise FileNotFoundError(
+                "Real eval files missing. Expected:\n"
+                f"- {args.ground_truth}\n"
+                f"- {args.base_preds}\n"
+                f"- {args.finetuned_preds}"
+            )
         ground_truth, base_preds, finetuned_preds = _build_mock_sets()
         print("Using built-in mock evaluation set (real eval JSON files not found).")
 
