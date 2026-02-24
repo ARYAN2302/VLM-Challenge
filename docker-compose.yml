@@ -4,6 +4,9 @@ services:
   vlm-api:
     build: .
     container_name: openpack-vlm-api
+    environment:
+      - MODEL_ID=Qwen/Qwen2-VL-2B-Instruct
+      - ADAPTER_PATH=
     ports:
       - "8000:8000"
     deploy:

@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir \
     python-multipart==0.0.20 \
     transformers==4.49.0 \
     accelerate==1.2.1 \
+    peft==0.14.0 \
     decord==0.6.0 \
     torchvision==0.16.2 \
     bitsandbytes==0.45.2 \

@@ -7,10 +7,12 @@ from typing import Any, Dict, Optional
 import torch
 from decord import VideoReader, cpu
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from peft import PeftModel
 from pydantic import BaseModel, Field
-from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
+from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
 
-MODEL_ID = "Qwen/Qwen2.5-VL-2B-Instruct"
+MODEL_ID = os.getenv("MODEL_ID", "Qwen/Qwen2-VL-2B-Instruct")
+ADAPTER_PATH = os.getenv("ADAPTER_PATH", "").strip()
 ALLOWED_OPS = {
     "Box Setup",
     "Inner Packing",
@@ -47,14 +49,18 @@ processor = None
 async def load_model() -> None:
     global model, processor
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+    dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
     processor = AutoProcessor.from_pretrained(MODEL_ID)
-    model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+    base_model = Qwen2VLForConditionalGeneration.from_pretrained(
         MODEL_ID,
         torch_dtype=dtype,
         device_map="auto" if device == "cuda" else None,
     )
+    model = base_model
+    if ADAPTER_PATH:
+        model = PeftModel.from_pretrained(base_model, ADAPTER_PATH, is_trainable=False)
+        model = model.merge_and_unload()
     if device == "cpu":
         model.to(device)
 
